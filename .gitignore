@@ -39,5 +39,6 @@ vignettes/*.pdf
 .Renviron
 
 # Attempt to remove data from git push
-*/data
+/data
+
 
