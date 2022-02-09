@@ -315,8 +315,20 @@ snow_data_full &lt;- map_dfr(snow_files,our_snow_reader)</code></pre>
   .[grepl(&#39;forcing&#39;,.)] %&gt;% #pattern matching &#39;.&#39; references the nodes found in &#39;a&#39;.
   html_attr(&#39;href&#39;) #remove reference line for html</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li><p>Download the meteorological data. Use the <code>download_file</code> and <code>str_split_fixed</code> commands to download the data and save it in your data folder. You can use a for loop or a map function.</p></li>
-<li><p>Write a custom function to read in the data and append a site column to the data.</p></li>
+<li>Download the meteorological data. Use the <code>download_file</code> and <code>str_split_fixed</code> commands to download the data and save it in your data folder. You can use a for loop or a map function.</li>
+</ol>
+<pre class="r"><code>?download.file #need url and destfile (where you want the file to go and how to name it)
+
+split&lt;- str_split_fixed(weblinks,&#39;/&#39;,8) 
+  
+splitdata&lt;-split[,8]
+filenames&lt;-paste0(&#39;data/&#39;,splitdata)
+
+for (i in 1:2){
+  download.file(weblinks[i],destfile = filenames[i])
+}</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Write a custom function to read in the data and append a site column to the data.</li>
 </ol>
 <pre class="r"><code># this code grabs the variable names from the metadata pdf file
 library(pdftools)</code></pre>
