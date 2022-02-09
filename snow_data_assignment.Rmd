@@ -1,6 +1,6 @@
 ---
 title: "Snow Data Assignment: Web Scraping, Functions, and Iteration"
-author: "Nathan Mueller"
+author: "Meggi Varnai"
 date: "2-7-2022"
 output: html_document
 ---
@@ -140,7 +140,23 @@ ggplot(snow_yearly,aes(x=Year,y=mean_height,color=site)) +
 
 1. Extract the meteorological data URLs. Here we want you to use the `rvest` package to get the URLs for the `SASP forcing` and `SBSP_forcing` meteorological datasets.
 
+```{r}
+
+weblinks<-webpage %>% #reuse web url and webpage from sample, using same name
+  html_nodes('a') %>% # a indicates to take a node as a reference (using 'a') on the website
+  .[grepl('forcing',.)] %>% #pattern matching '.' references the nodes found in 'a'.
+  html_attr('href') #remove reference line for html
+
+```
+
 2. Download the meteorological data. Use the `download_file` and `str_split_fixed` commands to download the data and save it in your data folder. You can use a for loop or a map function. 
+
+```{r}
+
+
+
+```
+
 
 3. Write a custom function to read in the data and append a site column to the data. 
 
@@ -159,6 +175,11 @@ headers <- pdf_text('https://snowstudies.org/wp-content/uploads/2022/02/Serially
 ```
 
 4. Use the `map` function to read in both meteorological files. Display a summary of your tibble.
+
+```{r}
+
+```
+
 
 5. Make a line plot of mean temp by year by site (using the `air temp [K]` variable). Is there anything suspicious in the plot? Adjust your filtering if needed.
 
