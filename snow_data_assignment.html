@@ -354,11 +354,42 @@ weather_reader &lt;- function(filenames){
   test=read.delim(filenames,header=FALSE,sep = &quot;&quot;,col.names = headers,skip=4) %&gt;%
     select(1:14) %&gt;%
     mutate(site=name2) #adding column for site name
-}
-
-weather_data &lt;-map_dfr(filenames,weather_reader)</code></pre>
+}</code></pre>
 <ol start="4" style="list-style-type: decimal">
-<li><p>Use the <code>map</code> function to read in both meteorological files. Display a summary of your tibble.</p></li>
+<li>Use the <code>map</code> function to read in both meteorological files. Display a summary of your tibble.</li>
+</ol>
+<pre class="r"><code>weather_data &lt;-map_dfr(filenames,weather_reader)
+
+summary(weather_data)</code></pre>
+<pre><code>##       year          month             day             hour           minute 
+##  Min.   :2003   Min.   : 1.000   Min.   : 1.00   Min.   : 0.00   Min.   :0  
+##  1st Qu.:2005   1st Qu.: 3.000   1st Qu.: 8.00   1st Qu.: 5.75   1st Qu.:0  
+##  Median :2007   Median : 6.000   Median :16.00   Median :11.50   Median :0  
+##  Mean   :2007   Mean   : 6.472   Mean   :15.76   Mean   :11.50   Mean   :0  
+##  3rd Qu.:2009   3rd Qu.: 9.000   3rd Qu.:23.00   3rd Qu.:17.25   3rd Qu.:0  
+##  Max.   :2011   Max.   :12.000   Max.   :31.00   Max.   :23.00   Max.   :0  
+##      second  precip..kg.m.2.s.1. sw.down..W.m.2.     lw.down..W.m.2.  
+##  Min.   :0   Min.   :0.000e+00   Min.   :-9999.000   Min.   :-9999.0  
+##  1st Qu.:0   1st Qu.:0.000e+00   1st Qu.:   -3.510   1st Qu.:  173.4  
+##  Median :0   Median :0.000e+00   Median :   -0.344   Median :  231.4  
+##  Mean   :0   Mean   :3.838e-05   Mean   :-1351.008   Mean   :-1325.7  
+##  3rd Qu.:0   3rd Qu.:0.000e+00   3rd Qu.:  294.900   3rd Qu.:  272.2  
+##  Max.   :0   Max.   :6.111e-03   Max.   : 1341.000   Max.   :  365.8  
+##   air.temp..K.   windspeed..m.s.1.   relative.humidity.... pressure..Pa.  
+##  Min.   :242.1   Min.   :-9999.000   Min.   :  0.011       Min.   :63931  
+##  1st Qu.:265.8   1st Qu.:    0.852   1st Qu.: 37.580       1st Qu.:63931  
+##  Median :272.6   Median :    1.548   Median : 59.910       Median :65397  
+##  Mean   :272.6   Mean   : -790.054   Mean   : 58.891       Mean   :65397  
+##  3rd Qu.:279.7   3rd Qu.:    3.087   3rd Qu.: 81.600       3rd Qu.:66863  
+##  Max.   :295.8   Max.   :  317.300   Max.   :324.800       Max.   :66863  
+##  specific.humidity..g.g.1.     site          
+##  Min.   :0.000000          Length:138336     
+##  1st Qu.:0.001744          Class :character  
+##  Median :0.002838          Mode  :character  
+##  Mean   :0.003372                            
+##  3rd Qu.:0.004508                            
+##  Max.   :0.014780</code></pre>
+<ol start="5" style="list-style-type: decimal">
 <li><p>Make a line plot of mean temp by year by site (using the <code>air temp [K]</code> variable). Is there anything suspicious in the plot? Adjust your filtering if needed.</p></li>
 <li><p>Write a function that makes line plots of monthly average temperature at each site for a given year. Use a for loop to make these plots for 2005 to 2010. Are monthly average temperatures at the Senator Beck Study Plot ever warmer than the Snow Angel Study Plot? Hint: <a href="https://ggplot2.tidyverse.org/reference/print.ggplot.html" class="uri">https://ggplot2.tidyverse.org/reference/print.ggplot.html</a></p></li>
 </ol>
