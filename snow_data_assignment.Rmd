@@ -141,7 +141,10 @@ ggplot(snow_yearly,aes(x=Year,y=mean_height,color=site)) +
 1. Extract the meteorological data URLs. Here we want you to use the `rvest` package to get the URLs for the `SASP forcing` and `SBSP_forcing` meteorological datasets.
 
 ```{r}
+site_url <- 'https://snowstudies.org/archived-data/'
 
+#Read the web url
+webpage <- read_html(site_url)
 weblinks<-webpage %>% #reuse web url and webpage from sample, using same name
   html_nodes('a') %>% # a indicates to take a node as a reference (using 'a') on the website
   .[grepl('forcing',.)] %>% #pattern matching '.' references the nodes found in 'a'.
@@ -154,14 +157,19 @@ weblinks<-webpage %>% #reuse web url and webpage from sample, using same name
 ```{r}
 ?download.file #need url and destfile (where you want the file to go and how to name it)
 
-split<- str_split_fixed(weblinks,'/',8) 
+split<- str_split_fixed(weblinks,'/',8) #finding our destfile names
   
-splitdata<-split[,8]
-filenames<-paste0('data/',splitdata)
+splitdata<-split[,8] %>% #column 8 holds the names we want
+  gsub('.txt','',.)  # helps us keep track of site names?
+
+
+filenames<-paste0('data/',splitdata) #creating 
 
 for (i in 1:2){
   download.file(weblinks[i],destfile = filenames[i])
 }
+
+
 ```
 
 
@@ -178,6 +186,19 @@ headers <- pdf_text('https://snowstudies.org/wp-content/uploads/2022/02/Serially
   .[,2] %>%
   .[1:26] %>%
   str_trim(side = "left")
+
+weatherfiles<-filenames
+
+emptydata<-list() #create an empty list to load data into
+weatherdata <- for (i in 1:length(weatherfiles)){
+  emptydata[[i]]<-read_delim(filenames) %>%
+    select(Year, DOY)
+}
+
+
+
+full_data<- rbind(headers,)
+
 
 ```
 
