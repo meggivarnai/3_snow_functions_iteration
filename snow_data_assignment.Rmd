@@ -195,18 +195,14 @@ weather_reader <- function(filenames){
     mutate(site=name2) #adding column for site name
 }
 
-weather_data <-map_dfr(filenames,weather_reader)
-
-
-
-
 ```
 
 4. Use the `map` function to read in both meteorological files. Display a summary of your tibble.
 
 ```{r}
+weather_data <-map_dfr(filenames,weather_reader)
 
-
+summary(weather_data)
 ```
 
 

@@ -310,7 +310,11 @@ snow_data_full &lt;- map_dfr(snow_files,our_snow_reader)</code></pre>
 <ol style="list-style-type: decimal">
 <li>Extract the meteorological data URLs. Here we want you to use the <code>rvest</code> package to get the URLs for the <code>SASP forcing</code> and <code>SBSP_forcing</code> meteorological datasets.</li>
 </ol>
-<pre class="r"><code>weblinks&lt;-webpage %&gt;% #reuse web url and webpage from sample, using same name
+<pre class="r"><code>site_url &lt;- &#39;https://snowstudies.org/archived-data/&#39;
+
+#Read the web url
+webpage &lt;- read_html(site_url)
+weblinks&lt;-webpage %&gt;% #reuse web url and webpage from sample, using same name
   html_nodes(&#39;a&#39;) %&gt;% # a indicates to take a node as a reference (using &#39;a&#39;) on the website
   .[grepl(&#39;forcing&#39;,.)] %&gt;% #pattern matching &#39;.&#39; references the nodes found in &#39;a&#39;.
   html_attr(&#39;href&#39;) #remove reference line for html</code></pre>
@@ -319,10 +323,13 @@ snow_data_full &lt;- map_dfr(snow_files,our_snow_reader)</code></pre>
 </ol>
 <pre class="r"><code>?download.file #need url and destfile (where you want the file to go and how to name it)
 
-split&lt;- str_split_fixed(weblinks,&#39;/&#39;,8) 
+split&lt;- str_split_fixed(weblinks,&#39;/&#39;,8) #finding our destfile names
   
-splitdata&lt;-split[,8]
-filenames&lt;-paste0(&#39;data/&#39;,splitdata)
+splitdata&lt;-split[,8] %&gt;% #column 8 holds the names we want
+  gsub(&#39;.txt&#39;,&#39;&#39;,.)  # helps us keep track of site names?
+
+
+filenames&lt;-paste0(&#39;data/&#39;,splitdata) #creating 
 
 for (i in 1:2){
   download.file(weblinks[i],destfile = filenames[i])
@@ -339,7 +346,17 @@ library(pdftools)</code></pre>
   str_split_fixed(.,&#39;\\.&#39;,2) %&gt;%
   .[,2] %&gt;%
   .[1:26] %&gt;%
-  str_trim(side = &quot;left&quot;)</code></pre>
+  str_trim(side = &quot;left&quot;)
+
+weather_reader &lt;- function(filenames){
+  name=str_split_fixed(filenames,&#39;/&#39;,2)[,2] #finding files
+  name2=str_split_fixed(filenames,&#39;/&#39;,4)[,2] #finding site name
+  test=read.delim(filenames,header=FALSE,sep = &quot;&quot;,col.names = headers,skip=4) %&gt;%
+    select(1:14) %&gt;%
+    mutate(site=name2) #adding column for site name
+}
+
+weather_data &lt;-map_dfr(filenames,weather_reader)</code></pre>
 <ol start="4" style="list-style-type: decimal">
 <li><p>Use the <code>map</code> function to read in both meteorological files. Display a summary of your tibble.</p></li>
 <li><p>Make a line plot of mean temp by year by site (using the <code>air temp [K]</code> variable). Is there anything suspicious in the plot? Adjust your filtering if needed.</p></li>
