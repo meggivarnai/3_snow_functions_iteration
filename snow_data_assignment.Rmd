@@ -187,17 +187,17 @@ headers <- pdf_text('https://snowstudies.org/wp-content/uploads/2022/02/Serially
   .[1:26] %>%
   str_trim(side = "left")
 
-weatherfiles<-filenames
-
-emptydata<-list() #create an empty list to load data into
-weatherdata <- for (i in 1:length(weatherfiles)){
-  emptydata[[i]]<-read_delim(filenames) %>%
-    select(Year, DOY)
+weather_reader <- function(filenames){
+  name=str_split_fixed(filenames,'/',2)[,2] #finding files
+  name2=str_split_fixed(filenames,'/',4)[,2] #finding site name
+  test=read.delim(filenames,header=FALSE,sep = "",col.names = headers,skip=4) %>%
+    select(1:14) %>%
+    mutate(site=name2) #adding column for site name
 }
 
+weather_data <-map_dfr(filenames,weather_reader)
 
 
-full_data<- rbind(headers,)
 
 
 ```
