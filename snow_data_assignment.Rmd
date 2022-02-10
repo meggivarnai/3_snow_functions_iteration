@@ -218,8 +218,15 @@ mean_temp_data<-weather_data %>%
 
 ggplot(mean_temp_data, aes(x=year,y=mean_temp,color=site))+
   geom_line()+
-  theme_few()
-
+  theme_few()+
+  labs(x='Year', y= 'Mean Temp (K)',
+       title= 'Mean Temperature by Year')+
+  theme(legend.position = "bottom",
+        legend.box = "horizontal")+
+  scale_colour_manual(labels= c("SASP","SBSP"),
+                      values = c("lavender","skyblue2"))
+       
+      
 ```
 
 
