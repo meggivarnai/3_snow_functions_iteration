@@ -10,6 +10,7 @@ library(rvest)
 library(tidyverse)
 library(lubridate)
 library(readxl)
+library(ggthemes)
 
 ```
 
@@ -200,7 +201,7 @@ weather_reader <- function(filenames){
 4. Use the `map` function to read in both meteorological files. Display a summary of your tibble.
 
 ```{r}
-weather_data <-map_dfr(filenames,weather_reader)
+weather_data <-map_dfr(filenames,weather_reader) #runs function and saves it 
 
 summary(weather_data)
 ```
@@ -209,7 +210,15 @@ summary(weather_data)
 5. Make a line plot of mean temp by year by site (using the `air temp [K]` variable). Is there anything suspicious in the plot? Adjust your filtering if needed.
 
 ```{r}
+unique(weather_data$site)
 
+mean_temp_data<-weather_data %>%
+  group_by(site,year) %>%
+  summarise(mean_temp=mean(air.temp..K.))
+
+ggplot(mean_temp_data, aes(x=year,y=mean_temp,color=site))+
+  geom_line()+
+  theme_few()
 
 ```
 
