@@ -208,11 +208,13 @@ summary(weather_data)
 
 
 5. Make a line plot of mean temp by year by site (using the `air temp [K]` variable). Is there anything suspicious in the plot? Adjust your filtering if needed.
+A: It is suspicious that the mean temp is so much lower in 2003. When looking at the 2003 data, we see we only have two months of temperature data, so i filtered 2003 out. 
 
 ```{r}
 unique(weather_data$site)
 
 mean_temp_data<-weather_data %>%
+  filter(year>2003)%>%
   group_by(site,year) %>%
   summarise(mean_temp=mean(air.temp..K.))
 
@@ -223,17 +225,23 @@ ggplot(mean_temp_data, aes(x=year,y=mean_temp,color=site))+
        title= 'Mean Temperature by Year')+
   theme(legend.position = "bottom",
         legend.box = "horizontal")+
-  scale_colour_manual(labels= c("SASP","SBSP"),
+  scale_colour_manual(labels= c("Swamp Angel Study Plot","Senator Beck Study Plot"),
                       values = c("lavender","skyblue2"))
        
-      
 ```
 
 
-6. Write a function that makes line plots of monthly average temperature at each site for a given year. Use a for loop to make these plots for 2005 to 2010. Are monthly average temperatures at the Senator Beck Study Plot ever warmer than the Snow Angel Study Plot?
+6. Write a function that makes line plots of monthly average temperature at each site for a given year. Use a for loop to make these plots for 2005 to 2010. Are monthly average temperatures at the Senator Beck Study Plot ever warmer than the Swamp Angel Study Plot?
 Hint: https://ggplot2.tidyverse.org/reference/print.ggplot.html
 
 ```{r}
+
+monthly<-weather_data %>%
+  filter(month,site)
+
+?group_by #Most data operations are done on groups defined by variables. group_by() takes an existing tbl and converts it into a grouped tbl where operations are performed "by group"
+?filter #filter() function is used to subset a data frame, retaining all rows that satisfy your conditions. To be retained, the row must produce a value of TRUE for all conditions. 
+
 
 
 ```
