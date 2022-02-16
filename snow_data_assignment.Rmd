@@ -235,12 +235,41 @@ ggplot(mean_temp_data, aes(x=year,y=mean_temp,color=site))+
 Hint: https://ggplot2.tidyverse.org/reference/print.ggplot.html
 
 ```{r}
+#new data frame with monthly average temperature
+years <- c(2005:2010)
 
-monthly<-weather_data %>%
-  filter(month,site)
+#this is what we want the function to do
+by_year<- weather_data%>%
+  group_by(month,site) %>%
+  summarise(monthly_temp=mean(air.temp..K.)) %>%
+  
+#add titles and such
+ggplot(by_year, aes(x=month, y=monthly_temp, color=site))+
+  geom_line()
 
-?group_by #Most data operations are done on groups defined by variables. group_by() takes an existing tbl and converts it into a grouped tbl where operations are performed "by group"
-?filter #filter() function is used to subset a data frame, retaining all rows that satisfy your conditions. To be retained, the row must produce a value of TRUE for all conditions. 
+#we want functions to pull from raw datasets!
+monthly_plots <- function(weather_data, year_of_interest){
+  by_year<- weather_data%>%
+  filter(year==year_of_interest) %>%
+  group_by(month,site) %>%
+  summarise(monthly_temp=mean(air.temp..K.)) %>%
+  print(ggplot(aes(x=month, y=monthly_temp, color=site))+
+  geom_line())
+  
+}
+                          
+monthly_plots(weather_data,year_of_interest)
+
+
+
+
+
+ 
+
+
+  
+
+
 
 
 
