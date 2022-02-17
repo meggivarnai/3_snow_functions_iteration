@@ -1,7 +1,7 @@
 ---
 title: "Snow Data Assignment: Web Scraping, Functions, and Iteration"
 author: "Meggi Varnai"
-date: "2-7-2022"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: html_document
 ---
 
@@ -141,7 +141,7 @@ ggplot(snow_yearly,aes(x=Year,y=mean_height,color=site)) +
 
 1. Extract the meteorological data URLs. Here we want you to use the `rvest` package to get the URLs for the `SASP forcing` and `SBSP_forcing` meteorological datasets.
 
-```{r}
+```{r, message= FALSE}
 site_url <- 'https://snowstudies.org/archived-data/'
 
 #Read the web url
@@ -155,7 +155,7 @@ weblinks<-webpage %>% #reuse web url and webpage from sample, using same name
 
 2. Download the meteorological data. Use the `download_file` and `str_split_fixed` commands to download the data and save it in your data folder. You can use a for loop or a map function. 
 
-```{r}
+```{r,message= FALSE}
 ?download.file #need url and destfile (where you want the file to go and how to name it)
 
 split<- str_split_fixed(weblinks,'/',8) #finding our destfile names
@@ -176,7 +176,7 @@ for (i in 1:2){
 
 3. Write a custom function to read in the data and append a site column to the data. 
 
-```{r}
+```{r,message= FALSE}
 
 # this code grabs the variable names from the metadata pdf file
 library(pdftools)
@@ -200,7 +200,7 @@ weather_reader <- function(filenames){
 
 4. Use the `map` function to read in both meteorological files. Display a summary of your tibble.
 
-```{r}
+```{r,message= FALSE}
 weather_data <-map_dfr(filenames,weather_reader) #runs function and saves it 
 
 summary(weather_data)
@@ -210,7 +210,7 @@ summary(weather_data)
 5. Make a line plot of mean temp by year by site (using the `air temp [K]` variable). Is there anything suspicious in the plot? Adjust your filtering if needed.
 A: It is suspicious that the mean temp is so much lower in 2003. When looking at the 2003 data, we see we only have two months of temperature data, so i filtered 2003 out. 
 
-```{r}
+```{r,message= FALSE}
 unique(weather_data$site)
 
 mean_temp_data<-weather_data %>%
@@ -234,42 +234,44 @@ ggplot(mean_temp_data, aes(x=year,y=mean_temp,color=site))+
 6. Write a function that makes line plots of monthly average temperature at each site for a given year. Use a for loop to make these plots for 2005 to 2010. Are monthly average temperatures at the Senator Beck Study Plot ever warmer than the Swamp Angel Study Plot?
 Hint: https://ggplot2.tidyverse.org/reference/print.ggplot.html
 
-```{r}
+A: No, Senator Beck Study Plot is never warmer than the Swamp Angel Study Plot during this time period. 
+
+```{r,message= FALSE}
 #new data frame with monthly average temperature
 years <- c(2005:2010)
 
 #this is what we want the function to do
 by_year<- weather_data%>%
-  group_by(month,site) %>%
+  group_by(month,year,site) %>%
   summarise(monthly_temp=mean(air.temp..K.)) %>%
-  
-#add titles and such
-ggplot(by_year, aes(x=month, y=monthly_temp, color=site))+
-  geom_line()
+  ggplot( aes(x=month, y=monthly_temp, color=site))+
+  geom_line()+
+  labs(x= 'Month', y= 'Average Air Temperature (K)')
 
 #we want functions to pull from raw datasets!
-monthly_plots <- function(weather_data, year_of_interest){
+monthly_plots <- function(weather_data,years){
   by_year<- weather_data%>%
-  filter(year==year_of_interest) %>%
-  group_by(month,site) %>%
-  summarise(monthly_temp=mean(air.temp..K.)) %>%
-  print(ggplot(aes(x=month, y=monthly_temp, color=site))+
-  geom_line())
+  filter(yr==year) %>%
+  group_by(month,year,site) %>%
+  summarise(monthly_temp=mean(air.temp..K.)) 
+    
+  plots<-(ggplot(by_year, aes(x=month, y=monthly_temp, color=site))+
+  geom_line()+
+  theme_few()+
+  scale_color_few()+
+  labs(x= 'Month',
+       y= 'Average Air Temperature (K)',
+       title=by_year$year))+
+  theme(legend.position = "bottom",
+        legend.box = "horizontal")
   
+  print(plots)
 }
-                          
-monthly_plots(weather_data,year_of_interest)
 
-
-
-
-
- 
-
-
-  
-
-
+#looping to plot                         
+for (yr in years){
+  monthly_plots(weather_data,years)
+}
 
 
 
